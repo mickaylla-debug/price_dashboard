@@ -104,6 +104,8 @@ def try_jsonld(soup):
                         price = float(str(offers["price"]).replace(",", ""))
                     except ValueError:
                         continue
+                    if price <= 0:
+                        continue
                     image = item.get("image")
                     if isinstance(image, list):
                         image = image[0] if image else None
@@ -123,8 +125,10 @@ def try_meta_tags(soup):
         tag = soup.find("meta", attrs=attrs)
         if tag and tag.get("content"):
             try:
-                price = float(tag["content"].replace(",", ""))
-                break
+                candidate = float(tag["content"].replace(",", ""))
+                if candidate > 0:
+                    price = candidate
+                    break
             except ValueError:
                 continue
 
@@ -139,7 +143,9 @@ def try_meta_tags(soup):
 def try_regex(html):
     match = re.search(r"\$\s?(\d{1,4}(?:\.\d{2}))", html)
     if match:
-        return float(match.group(1)), None, None
+        price = float(match.group(1))
+        if price > 0:
+            return price, None, None
     return None, None, None
 
 
@@ -181,6 +187,9 @@ def try_shopify_json(url):
     try:
         price = float(str(chosen["price"]).replace(",", ""))
     except (KeyError, TypeError, ValueError):
+        return None, None, None
+
+    if price <= 0:
         return None, None, None
 
     image = None

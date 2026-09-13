@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <title>Wishlist Price Dashboard</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#14111a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Wishlist Prices">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" href="./icon-192.png">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
 <style>
   :root {
@@ -408,7 +414,7 @@ fetch('./prices.json?_=' + Date.now())
   .then(r => r.json())
   .then(data => {
     allItems = Object.entries(data).map(([url, rec]) => ({ url, ...rec }))
-      .filter(it => typeof it.price === 'number');
+      .filter(it => typeof it.price === 'number' && it.price > 0);
 
     const timestamps = allItems.map(it => it.last_checked).filter(Boolean).sort();
     const latest = timestamps[timestamps.length - 1];
